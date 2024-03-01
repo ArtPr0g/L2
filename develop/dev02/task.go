@@ -1,23 +1,44 @@
 package main
 
-/*
-=== Задача на распаковку ===
+import (
+	"errors"
+	"fmt"
+	"strconv"
+)
 
-Создать Go функцию, осуществляющую примитивную распаковку строки, содержащую повторяющиеся символы / руны, например:
-	- "a4bc2d5e" => "aaaabccddddde"
-	- "abcd" => "abcd"
-	- "45" => "" (некорректная строка)
-	- "" => ""
-Дополнительное задание: поддержка escape - последовательностей
-	- qwe\4\5 => qwe45 (*)
-	- qwe\45 => qwe44444 (*)
-	- qwe\\5 => qwe\\\\\ (*)
+var (
+	errBadInput = errors.New("неверная строка")
+)
 
-В случае если была передана некорректная строка функция должна возвращать ошибку. Написать unit-тесты.
+func unpack(text string) (string, error) {
+	var letter, answer string
+	if text == " " {
+		answer = " "
+	} else {
+		for i, v := range text {
+			if i == 0 && v >= 48 && v <= 57 {
+				answer = ""
+				return answer, errBadInput
 
-Функция должна проходить все тесты. Код должен проходить проверки go vet и golint.
-*/
+			} else if n, err := strconv.Atoi(string(v)); err == nil {
+				if _, err := strconv.Atoi(string(text[i-1])); err != nil {
+					letter = string(text[i-1])
+				}
+				for j := 0; j < n-1; j++ {
+					answer += letter
+				}
+			} else {
+				answer += string(v)
+			}
+		}
+	}
+	return answer, nil
+
+}
 
 func main() {
 
+	b := " 10"
+	a, err := unpack(b)
+	fmt.Println(a, err)
 }

@@ -19,6 +19,30 @@ package main
 Программа должна проходить все тесты. Код должен проходить проверки go vet и golint.
 */
 
-func main() {
+import (
+	"sort"
+	"strings"
+)
 
+func findAnagramSets(words []string) map[string][]string {
+	anagramMap := make(map[string][]string)
+
+	for _, word := range words {
+		// Преобразуем слово в нижний регистр и сортируем буквы
+		wordRunes := []rune(strings.ToLower(word))
+		sort.Slice(wordRunes, func(i, j int) bool { return wordRunes[i] < wordRunes[j] })
+		sortedWord := string(wordRunes)
+
+		// Добавляем слово в соответствующее множество анаграмм
+		anagramMap[sortedWord] = append(anagramMap[sortedWord], word)
+	}
+
+	// Удаляем множества из одного элемента
+	for key, value := range anagramMap {
+		if len(value) == 1 {
+			delete(anagramMap, key)
+		}
+	}
+
+	return anagramMap
 }
